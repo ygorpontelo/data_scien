@@ -6,11 +6,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB, MultinomialNB, ComplementNB, BernoulliNB
 
-# show all df
+# show all of df
 pd.options.display.max_columns = None
 pd.options.display.max_rows = None
 
+# open csv with data
 df = pd.read_csv('model2.csv')
 df_c = df.copy()
 del df_c['target'] 
@@ -22,26 +24,23 @@ min_max_scaler = preprocessing.MinMaxScaler()
 x_scaled = min_max_scaler.fit_transform(X)
 X = pd.DataFrame(x_scaled)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
+# divide train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-model = LogisticRegression(max_iter=10000)
-model.fit(X_train, y_train)
+models = {
+    'Logistic Regression': LogisticRegression(max_iter=10000), 
+    'Gaussian NB': GaussianNB(), 
+    'Multinomial NB': MultinomialNB(),
+    'Complement NB': ComplementNB(),
+    'BernoulliNB': BernoulliNB(),
+    'KNN': KNeighborsClassifier(n_neighbors=142)
+}
 
-y_pred = model.predict(X_test)
-model_score = model.score(X_test, y_test)
-
-print('Regressao logistica')
-print('Score: ', model_score)
-print('Matriz de confusao: ', metrics.confusion_matrix(y_test, y_pred))
-
-# kneighboors
-
-neigh = KNeighborsClassifier(n_neighbors=142)
-neigh.fit(X_train, y_train)
-
-y_pred = model.predict(X_test)
-model_score = neigh.score(X_test, y_test)
-
-print('K neighboors')
-print('Score: ', model_score)
-print('Matriz de confusao: ', metrics.confusion_matrix(y_test, y_pred))
+# train each model
+for model_name, model in models.items():
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    model_score = model.score(X_test, y_test)
+    print(model_name)
+    print('Score: ', model_score)
+    print('Matriz de confusao: ', metrics.confusion_matrix(y_test, y_pred))

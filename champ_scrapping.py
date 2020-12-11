@@ -20,7 +20,6 @@ for s in scripts:
 initial_pos = data.index('[')
 end_pos = data.index(';')
 data = data.replace(':null', ':None')
-# print(data[initial_pos: end_pos])
 
 champions = eval(data[initial_pos: end_pos])
 
@@ -35,7 +34,6 @@ with open('champ_game_stats.csv', 'w', newline='') as csvfile:
     for champ in champions: 
         data = [champ['title'], champ['role']] + [elem if elem else 0 for elem in champ['general'].values()]
         spamwriter.writerow(data)
-
 
 #################### Base stats ###################
 
@@ -57,10 +55,6 @@ for row in rows:
     cols = [c.replace('%', '') for c in cols]
     if cols:  # Get rid of empty values
         data.append(cols)
-
-# print(t_header)
-# for champ in data:
-#     print(champ)
 
 with open('champ_base_stats.csv', 'w', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',',
